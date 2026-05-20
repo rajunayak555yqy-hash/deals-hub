@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DealHub Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family:'DM Sans',sans-serif; background:#030712; color:#f9fafb; }
+    h1,h2,h3,.syne { font-family:'Syne',sans-serif; }
+    ::-webkit-scrollbar { width:6px; } ::-webkit-scrollbar-track { background:#111827; } ::-webkit-scrollbar-thumb { background:#374151; border-radius:3px; }
+
+    .sidebar { background:#0d1117; border-right:1px solid #1f2937; min-height:100vh; width:220px; flex-shrink:0; }
+    .sidebar-link { display:flex; align-items:center; gap:10px; padding:10px 16px; border-radius:10px; color:#6b7280; font-size:14px; font-weight:600; cursor:pointer; transition:all 0.2s; margin:2px 8px; }
+    .sidebar-link:hover, .sidebar-link.active { background:rgba(249,115,22,0.12); color:#f97316; }
+    
+    .stat-card { background:#111827; border:1px solid #1f2937; border-radius:16px; padding:20px; }
+    .stat-value { font-size:28px; font-weight:800; }
+    
+    .inp { background:#1f2937; border:1px solid #374151; color:white; width:100%; padding:10px 14px; border-radius:10px; outline:none; transition:border 0.2s; font-size:13px; }
+    .inp:focus { border-color:#f97316; box-shadow:0 0 0 2px rgba(249,115,22,0.12); }
+    .inp option { background:#1f2937; }
+    
+    .btn-primary { background:linear-gradient(135deg,#f97316,#ef4444); color:white; font-weight:700; padding:10px 20px; border-radius:10px; border:none; cursor:pointer; font-size:13px; transition:all 0.2s; font-family:'Syne',sans-serif; }
+    .btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(249,115,22,0.3); }
+    .btn-sm { padding:6px 14px; font-size:12px; border-radius:8px; border:none; cursor:pointer; font-weight:700; transition:all 0.2s; }
+    .btn-edit { background:rgba(59,130,246,0.15); color:#60a5fa; border:1px solid rgba(59,130,246,0.3); }
+    .btn-edit:hover { background:rgba(59,130,246,0.25); }
+    .btn-delete { background:rgba(239,68,68,0.15); color:#f87171; border:1px solid rgba(239,68,68,0.3); }
+    .btn-delete:hover { background:rgba(239,68,68,0.25); }
+
+    .deal-row { background:#111827; border:1px solid #1f2937; border-radius:12px; padding:14px; display:flex; align-items:center; gap:12px; transition:border 0.2s; }
+    .deal-row:hover { border-color:#374151; }
+    .deal-thumb { width:52px; height:52px; border-radius:10px; object-fit:cover; background:#1f2937; flex-shrink:0; }
+
+    .toggle-switch { position:relative; width:44px; height:24px; }
+    .toggle-switch input { opacity:0; width:0; height:0; }
+    .toggle-slider { position:absolute; cursor:pointer; inset:0; background:#374151; border-radius:12px; transition:0.3s; }
+    .toggle-slider:before { content:''; position:absolute; height:18px; width:18px; left:3px; bottom:3px; background:white; border-radius:50%; transition:0.3s; }
+    input:checked + .toggle-slider { background:linear-gradient(135deg,#f97316,#ef4444); }
+    input:checked + .toggle-slider:before { transform:translateX(20px); }
+
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.8); backdrop-filter:blur(4px); z-index:100; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .modal-box { background:#111827; border:1px solid rgba(249,115,22,0.2); border-radius:20px; padding:24px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; }
+    
+    .badge { padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; }
+    .badge-amazon { background:rgba(255,153,0,0.15); color:#fbbf24; }
+    .badge-flipkart { background:rgba(40,116,240,0.15); color:#60a5fa; }
+    .badge-meesho { background:rgba(244,51,151,0.15); color:#f472b6; }
+
+    .toast { position:fixed; bottom:24px; right:24px; padding:12px 20px; border-radius:12px; font-size:13px; font-weight:600; z-index:9999; animation:slideIn 0.3s ease; }
+    @keyframes slideIn { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:translateX(0); } }
+    .toast-success { background:#10b981; color:white; }
+    .toast-error { background:#ef4444; color:white; }
+
+    .tab { padding:8px 20px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; color:#6b7280; transition:all 0.2s; border:none; background:transparent; }
+    .tab.active { background:rgba(249,115,22,0.15); color:#f97316; }
+
+    #loading { display:flex; justify-content:center; padding:40px; }
+    .spinner { width:32px; height:32px; border:3px solid #1f2937; border-top-color:#f97316; border-radius:50%; animation:spin 0.8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+  </style>
+</head>
+<body class="flex">
+
+<!-- ─── SIDEBAR ─────────────────────────────────────────── -->
+<aside class="sidebar hidden md:flex flex-col">
+  <div class="p-5 border-b border-gray-800">
+    <a href="/" class="syne text-xl font-extrabold">Deal<span style="color:#f97316">Hub</span></a>
+    <p class="text-xs text-gray-600 mt-1">Admin Panel</p>
+  </div>
+  <nav class="p-3 flex-1 mt-2">
+    <div class="sidebar-link active" onclick="showTab('dashboard')">📊 Dashboard</div>
+    <div class="sidebar-link" onclick="showTab('deals')">🛍️ All Deals</div>
+    <div class="sidebar-link" onclick="showTab('add')">➕ Add Deal</div>
+    <div class="sidebar-link" onclick="showTab('featured')">⭐ Featured</div>
+  </nav>
+  <div class="p-4 border-t border-gray-800">
+    <a href="/" class="sidebar-link" style="color:#6b7280">🏠 View Site</a>
+    <div class="sidebar-link" onclick="logout()" style="color:#ef4444">🚪 Logout</div>
+  </div>
+</aside>
+
+<!-- ─── MAIN ─────────────────────────────────────────────── -->
+<main class="flex-1 min-w-0 p-5 md:p-8 overflow-auto">
+
+  <!-- Mobile header -->
+  <div class="flex items-center justify-between mb-6 md:hidden">
+    <span class="syne text-xl font-bold">Deal<span style="color:#f97316">Hub</span> <span class="text-gray-500 text-sm font-normal">Admin</span></span>
+    <div class="flex gap-2">
+      <button onclick="showTab('add')" class="btn-primary btn-sm">+ Add</button>
+      <button onclick="logout()" class="btn-sm btn-delete">Logout</button>
+    </div>
+  </div>
+  <!-- Mobile tab bar -->
+  <div class="flex md:hidden gap-1 mb-6 bg-gray-900 p-1 rounded-xl overflow-x-auto">
+    <button class="tab active whitespace-nowrap" data-tab="dashboard" onclick="showTab('dashboard')">📊 Stats</button>
+    <button class="tab whitespace-nowrap" data-tab="deals" onclick="showTab('deals')">🛍️ Deals</button>
+    <button class="tab whitespace-nowrap" data-tab="add" onclick="showTab('add')">➕ Add</button>
+    <button class="tab whitespace-nowrap" data-tab="featured" onclick="showTab('featured')">⭐ Featured</button>
+  </div>
+
+  <!-- ── DASHBOARD TAB ──────────────────────────────────── -->
+  <section id="tab-dashboard">
+    <h2 class="syne text-2xl font-bold mb-6">Dashboard</h2>
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="stat-card">
+        <div class="text-2xl mb-2">🛍️</div>
+        <div class="stat-value text-orange-400" id="sTotalDeals">—</div>
+        <div class="text-xs text-gray-500 mt-1">Total Deals</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-2xl mb-2">✅</div>
+        <div class="stat-value text-green-400" id="sActiveDeals">—</div>
+        <div class="text-xs text-gray-500 mt-1">Active Deals</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-2xl mb-2">⭐</div>
+        <div class="stat-value text-yellow-400" id="sFeatured">—</div>
+        <div class="text-xs text-gray-500 mt-1">Featured</div>
+      </div>
+      <div class="stat-card">
+        <div class="text-2xl mb-2">👆</div>
+        <div class="stat-value text-blue-400" id="sClicks">—</div>
+        <div class="text-xs text-gray-500 mt-1">Total Clicks</div>
+      </div>
+    </div>
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="stat-card">
+        <h3 class="syne font-bold mb-4">Platform Breakdown</h3>
+        <div id="platformStats" class="space-y-3"></div>
+      </div>
+      <div class="stat-card">
+        <h3 class="syne font-bold mb-4">Quick Actions</h3>
+        <div class="space-y-3">
+          <button onclick="showTab('add')" class="btn-primary w-full">➕ Add New Deal</button>
+          <button onclick="showTab('deals')" class="w-full text-left px-4 py-3 rounded-10 bg-gray-800 text-gray-300 text-sm hover:bg-gray-700 transition-all rounded-lg">📋 Manage All Deals</button>
+          <a href="/" target="_blank" class="block text-center px-4 py-3 rounded-lg bg-gray-800 text-gray-300 text-sm hover:bg-gray-700 transition-all">🌐 View Live Site</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ALL DEALS TAB ──────────────────────────────────── -->
+  <section id="tab-deals" class="hidden">
+    <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
+      <h2 class="syne text-2xl font-bold">All Deals</h2>
+      <div class="flex gap-2">
+        <input type="text" id="adminSearch" placeholder="Search deals..." class="inp" style="width:200px;" oninput="filterAdminDeals(this.value)" />
+        <button onclick="showTab('add')" class="btn-primary">+ Add Deal</button>
+      </div>
+    </div>
+    <div id="adminDealsList" class="space-y-3">
+      <div id="loading"><div class="spinner"></div></div>
+    </div>
+    <div class="flex justify-center mt-6 gap-3" id="adminPagination"></div>
+  </section>
+
+  <!-- ── ADD / EDIT DEAL TAB ────────────────────────────── -->
+  <section id="tab-add" class="hidden">
+    <div class="flex items-center gap-3 mb-6">
+      <button onclick="showTab('deals')" class="text-gray-500 hover:text-white text-sm">← Back</button>
+      <h2 class="syne text-2xl font-bold" id="formTitle">Add New Deal</h2>
+    </div>
+    <div class="max-w-2xl">
+      <form id="dealForm" onsubmit="handleDealSubmit(event)" class="space-y-4">
+        <input type="hidden" id="editId" />
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-400 mb-1.5">Product Name *</label>
+            <input type="text" id="f_title" class="inp" placeholder="e.g. boAt Airdopes 141 TWS Earbuds" required />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-1.5">New Price (₹) *</label>
+            <input type="number" id="f_newPrice" class="inp" placeholder="999" required min="0" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-1.5">Old Price (₹) *</label>
+            <input type="number" id="f_oldPrice" class="inp" placeholder="2990" required min="0" />
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-400 mb-1.5">Image URL *</label>
+            <input type="url" id="f_imageUrl" class="inp" placeholder="https://..." required oninput="previewImage(this.value)" />
+            <div id="imgPreview" class="mt-2 hidden">
+              <img id="previewImg" src="" alt="Preview" class="w-20 h-20 rounded-10 object-cover rounded-xl border border-gray-700" />
+            </div>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-400 mb-1.5">Affiliate Link *</label>
+            <input type="url" id="f_affiliateLink" class="inp" placeholder="https://amzn.to/..." required />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-1.5">Platform *</label>
+            <select id="f_platform" class="inp" required>
+              <option value="">Select Platform</option>
+              <option value="Amazon">Amazon</option>
+              <option value="Flipkart">Flipkart</option>
+              <option value="Meesho">Meesho</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-1.5">Brand *</label>
+            <select id="f_brand" class="inp" required>
+              <option value="">Select Brand</option>
+              <option value="Boat">Boat</option>
+              <option value="Noise">Noise</option>
+              <option value="Apple">Apple</option>
+              <option value="Samsung">Samsung</option>
+              <option value="Zebronics">Zebronics</option>
+              <option value="Realme">Realme</option>
+              <option value="MI">MI</option>
+              <option value="Sony">Sony</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-400 mb-1.5">Category *</label>
+            <select id="f_category" class="inp" required>
+              <option value="">Select Category</option>
+              <option value="Electronics">Electronics</option>
+              <option value="Fashion">Fashion</option>
+              <option value="Home">Home</option>
+              <option value="Beauty">Beauty</option>
+              <option value="Fitness">Fitness</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-400 mb-2">Toggles</label>
+              <div class="space-y-2">
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <label class="toggle-switch"><input type="checkbox" id="f_featured" /><span class="toggle-slider"></span></label>
+                  <span class="text-sm text-gray-300">⭐ Featured (Today's Deals)</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <label class="toggle-switch"><input type="checkbox" id="f_trending" /><span class="toggle-slider"></span></label>
+                  <span class="text-sm text-gray-300">📈 Trending Badge</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <label class="toggle-switch"><input type="checkbox" id="f_hotDeal" /><span class="toggle-slider"></span></label>
+                  <span class="text-sm text-gray-300">🔥 Hot Deal Badge</span>
+                </label>
+                <label class="flex items-center gap-3 cursor-pointer">
+                  <label class="toggle-switch"><input type="checkbox" id="f_active" checked /><span class="toggle-slider"></span></label>
+                  <span class="text-sm text-gray-300">✅ Active (visible)</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Discount preview -->
+        <div id="discountPreview" class="bg-gray-900 border border-gray-800 rounded-12 p-3 text-sm hidden rounded-xl">
+          <span class="text-gray-400">Discount: </span><span id="discountVal" class="text-green-400 font-bold"></span>
+        </div>
+        <div class="flex gap-3 pt-2">
+          <button type="submit" class="btn-primary flex-1" id="submitBtn">➕ Add Deal</button>
+          <button type="button" onclick="resetForm()" class="flex-1 bg-gray-800 text-gray-300 rounded-10 py-2.5 text-sm font-semibold hover:bg-gray-700 transition-all rounded-xl">Reset</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ── FEATURED TAB ───────────────────────────────────── -->
+  <section id="tab-featured" class="hidden">
+    <h2 class="syne text-2xl font-bold mb-6">Featured Deals (Today's Collection)</h2>
+    <p class="text-gray-500 text-sm mb-4">These appear in the "Today's Greatest Collection" section on the homepage.</p>
+    <div id="featuredList" class="space-y-3">
+      <div id="featuredLoading"><div class="spinner mx-auto mt-8"></div></div>
+    </div>
+  </section>
+</main>
+
+<!-- ─── EDIT MODAL ──────────────────────────────────────── -->
+<div id="editModal" class="modal-overlay hidden" onclick="if(event.target===this)closeEditModal()">
+  <div class="modal-box">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="syne text-lg font-bold">Edit Deal</h3>
+      <button onclick="closeEditModal()" class="text-gray-500 hover:text-white w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-sm">✕</button>
+    </div>
+    <form id="editForm" onsubmit="handleEditSubmit(event)" class="space-y-3">
+      <input type="hidden" id="e_id" />
+      <div><label class="text-xs text-gray-400 mb-1 block">Product Name</label><input type="text" id="e_title" class="inp" required /></div>
+      <div class="grid grid-cols-2 gap-3">
+        <div><label class="text-xs text-gray-400 mb-1 block">New Price</label><input type="number" id="e_newPrice" class="inp" required /></div>
+        <div><label class="text-xs text-gray-400 mb-1 block">Old Price</label><input type="number" id="e_oldPrice" class="inp" required /></div>
+      </div>
+      <div><label class="text-xs text-gray-400 mb-1 block">Image URL</label><input type="url" id="e_imageUrl" class="inp" required /></div>
+      <div><label class="text-xs text-gray-400 mb-1 block">Affiliate Link</label><input type="url" id="e_affiliateLink" class="inp" required /></div>
+      <div class="grid grid-cols-3 gap-3">
+        <div><label class="text-xs text-gray-400 mb-1 block">Platform</label>
+          <select id="e_platform" class="inp"><option value="Amazon">Amazon</option><option value="Flipkart">Flipkart</option><option value="Meesho">Meesho</option><option value="Other">Other</option></select>
+        </div>
+        <div><label class="text-xs text-gray-400 mb-1 block">Brand</label>
+          <select id="e_brand" class="inp"><option>Boat</option><option>Noise</option><option>Apple</option><option>Samsung</option><option>Zebronics</option><option>Realme</option><option>MI</option><option>Sony</option><option>Other</option></select>
+        </div>
+        <div><label class="text-xs text-gray-400 mb-1 block">Category</label>
+          <select id="e_category" class="inp"><option>Electronics</option><option>Fashion</option><option>Home</option><option>Beauty</option><option>Fitness</option><option>Other</option></select>
+        </div>
+      </div>
+      <div class="flex gap-4 pt-1">
+        <label class="flex items-center gap-2 text-sm cursor-pointer"><label class="toggle-switch"><input type="checkbox" id="e_featured"/><span class="toggle-slider"></span></label>Featured</label>
+        <label class="flex items-center gap-2 text-sm cursor-pointer"><label class="toggle-switch"><input type="checkbox" id="e_trending"/><span class="toggle-slider"></span></label>Trending</label>
+        <label class="flex items-center gap-2 text-sm cursor-pointer"><label class="toggle-switch"><input type="checkbox" id="e_hotDeal"/><span class="toggle-slider"></span></label>Hot</label>
+        <label class="flex items-center gap-2 text-sm cursor-pointer"><label class="toggle-switch"><input type="checkbox" id="e_active"/><span class="toggle-slider"></span></label>Active</label>
+      </div>
+      <button type="submit" class="btn-primary w-full mt-2">💾 Save Changes</button>
+    </form>
+  </div>
+</div>
+
+<script>
+const API = '/api';
+let adminToken = localStorage.getItem('adminToken');
+let adminDealsCache = [];
+let adminPage = 1;
+
+// ── Auth check ─────────────────────────────────────────────
+if (!adminToken) window.location.href = '/admin/login';
+else {
+  fetch(`${API}/admin/verify`, { headers: { Authorization: 'Bearer ' + adminToken } })
+    .then(r => r.json())
+    .then(d => { if (!d.success) window.location.href = '/admin/login'; })
+    .catch(() => window.location.href = '/admin/login');
+}
+
+function authHeaders() {
+  return { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + adminToken };
+}
+
+// ── Toast ──────────────────────────────────────────────────
+function toast(msg, type = 'success') {
+  const t = document.createElement('div');
+  t.className = `toast toast-${type}`;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+// ── Tab switching ──────────────────────────────────────────
+function showTab(tab) {
+  ['dashboard','deals','add','featured'].forEach(t => {
+    document.getElementById(`tab-${t}`).classList.toggle('hidden', t !== tab);
+  });
+  document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+  document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+
+  if (tab === 'dashboard') loadStats();
+  if (tab === 'deals') loadAdminDeals();
+  if (tab === 'featured') loadFeaturedAdmin();
+  if (tab === 'add') { resetForm(); document.getElementById('formTitle').textContent = 'Add New Deal'; }
+}
+
+// ── Load Stats ─────────────────────────────────────────────
+async function loadStats() {
+  try {
+    const res = await fetch(`${API}/admin/stats`, { headers: authHeaders() });
+    const data = await res.json();
+    if (!data.success) return;
+    const s = data.stats;
+    document.getElementById('sTotalDeals').textContent = s.totalDeals;
+    document.getElementById('sActiveDeals').textContent = s.activeDeals;
+    document.getElementById('sFeatured').textContent = s.featuredDeals;
+    document.getElementById('sClicks').textContent = s.totalClicks.toLocaleString();
+
+    const colors = { Amazon:'#fbbf24', Flipkart:'#60a5fa', Meesho:'#f472b6', Other:'#a78bfa' };
+    document.getElementById('platformStats').innerHTML = s.platformStats.map(p => `
+      <div class="flex items-center gap-3">
+        <div class="w-2 h-2 rounded-full" style="background:${colors[p._id]||'#6b7280'}"></div>
+        <span class="text-sm text-gray-300 flex-1">${p._id}</span>
+        <div class="flex-1 bg-gray-800 rounded-full h-1.5 overflow-hidden">
+          <div class="h-full rounded-full" style="background:${colors[p._id]||'#6b7280'};width:${Math.min((p.count/s.totalDeals)*100,100)}%"></div>
+        </div>
+        <span class="text-xs text-gray-400 w-6 text-right">${p.count}</span>
+      </div>`).join('');
+  } catch (e) { console.error(e); }
+}
+
+// ── Load Admin Deals ────────────────────────────────────────
+async function loadAdminDeals(page = 1) {
+  adminPage = page;
+  document.getElementById('adminDealsList').innerHTML = '<div id="loading"><div class="spinner mx-auto mt-4"></div></div>';
+  try {
+    const res = await fetch(`${API}/deals/admin/all?page=${page}&limit=20`, { headers: authHeaders() });
+    const data = await res.json();
+    if (!data.success) { toast('Failed to load deals', 'error'); return; }
+    adminDealsCache = data.deals;
+    renderAdminDeals(data.deals);
+  } catch (e) { toast('Error loading deals', 'error'); }
+}
+
+function renderAdminDeals(deals) {
+  const container = document.getElementById('adminDealsList');
+  if (!deals.length) {
+    container.innerHTML = '<div class="text-center py-16 text-gray-500"><div class="text-4xl mb-3">📦</div><p>No deals found</p></div>';
+    return;
+  }
+  container.innerHTML = deals.map(d => {
+    const disc = d.oldPrice > 0 ? Math.round(((d.oldPrice - d.newPrice) / d.oldPrice) * 100) : 0;
+    const pb = d.platform === 'Amazon' ? 'badge-amazon' : d.platform === 'Flipkart' ? 'badge-flipkart' : 'badge-meesho';
+    return `<div class="deal-row">
+      <img class="deal-thumb" src="${d.imageUrl}" onerror="this.src='https://placehold.co/52x52/1f2937/374151?text=?'" loading="lazy" />
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-semibold text-gray-100 truncate">${d.title}</div>
+        <div class="flex items-center gap-2 mt-1 flex-wrap">
+          <span class="text-green-400 font-bold text-sm">₹${d.newPrice.toLocaleString()}</span>
+          <span class="text-gray-500 line-through text-xs">₹${d.oldPrice.toLocaleString()}</span>
+          <span class="badge" style="background:rgba(239,68,68,0.15);color:#f87171">${disc}% OFF</span>
+          <span class="badge ${pb}">${d.platform}</span>
+          ${d.featured ? '<span class="badge" style="background:rgba(234,179,8,0.15);color:#fbbf24">⭐ Featured</span>' : ''}
+          ${!d.active ? '<span class="badge" style="background:rgba(107,114,128,0.15);color:#6b7280">Hidden</span>' : ''}
+        </div>
+        <div class="text-xs text-gray-600 mt-0.5">👆 ${d.clicks} clicks · ${new Date(d.createdAt).toLocaleDateString()}</div>
+      </div>
+      <div class="flex gap-2 flex-shrink-0">
+        <button class="btn-sm btn-edit" onclick="openEditModal('${d._id}')">✏️ Edit</button>
+        <button class="btn-sm btn-delete" onclick="deleteDeal('${d._id}','${d.title.substring(0,30)}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function filterAdminDeals(q) {
+  const filtered = q ? adminDealsCache.filter(d => 
+    d.title.toLowerCase().includes(q.toLowerCase()) ||
+    d.brand.toLowerCase().includes(q.toLowerCase()) ||
+    d.platform.toLowerCase().includes(q.toLowerCase())
+  ) : adminDealsCache;
+  renderAdminDeals(filtered);
+}
+
+// ── Delete Deal ────────────────────────────────────────────
+async function deleteDeal(id, title) {
+  if (!confirm(`Delete "${title}"?`)) return;
+  try {
+    const res = await fetch(`${API}/deals/${id}`, { method: 'DELETE', headers: authHeaders() });
+    const data = await res.json();
+    if (data.success) { toast('Deal deleted!'); loadAdminDeals(adminPage); }
+    else toast(data.message, 'error');
+  } catch (e) { toast('Delete failed', 'error'); }
+}
+
+// ── Add Deal Form ──────────────────────────────────────────
+const fields = ['title','newPrice','oldPrice','imageUrl','affiliateLink','platform','brand','category'];
+
+function previewImage(url) {
+  const prev = document.getElementById('imgPreview');
+  if (url) { document.getElementById('previewImg').src = url; prev.classList.remove('hidden'); }
+  else { prev.classList.add('hidden'); }
+}
+
+// Live discount preview
+['f_newPrice','f_oldPrice'].forEach(id => {
+  document.getElementById(id)?.addEventListener('input', () => {
+    const np = parseFloat(document.getElementById('f_newPrice').value);
+    const op = parseFloat(document.getElementById('f_oldPrice').value);
+    const preview = document.getElementById('discountPreview');
+    if (np && op && op > np) {
+      const disc = Math.round(((op - np) / op) * 100);
+      document.getElementById('discountVal').textContent = `${disc}% OFF (saving ₹${(op-np).toLocaleString()})`;
+      preview.classList.remove('hidden');
+    } else { preview.classList.add('hidden'); }
+  });
+});
+
+async function handleDealSubmit(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  const body = {
+    title: document.getElementById('f_title').value,
+    newPrice: parseFloat(document.getElementById('f_newPrice').value),
+    oldPrice: parseFloat(document.getElementById('f_oldPrice').value),
+    imageUrl: document.getElementById('f_imageUrl').value,
+    affiliateLink: document.getElementById('f_affiliateLink').value,
+    platform: document.getElementById('f_platform').value,
+    brand: document.getElementById('f_brand').value,
+    category: document.getElementById('f_category').value,
+    featured: document.getElementById('f_featured').checked,
+    trending: document.getElementById('f_trending').checked,
+    hotDeal: document.getElementById('f_hotDeal').checked,
+    active: document.getElementById('f_active').checked,
+  };
+
+  const editId = document.getElementById('editId').value;
+  const method = editId ? 'PUT' : 'POST';
+  const url = editId ? `${API}/deals/${editId}` : `${API}/deals`;
+
+  try {
+    const res = await fetch(url, { method, headers: authHeaders(), body: JSON.stringify(body) });
+    const data = await res.json();
+    if (data.success) {
+      toast(editId ? 'Deal updated!' : 'Deal added!');
+      resetForm();
+      showTab('deals');
+    } else { toast(data.message, 'error'); }
+  } catch (err) { toast('Failed to save deal', 'error'); }
+  finally { btn.disabled = false; btn.textContent = editId ? '💾 Update Deal' : '➕ Add Deal'; }
+}
+
+function resetForm() {
+  document.getElementById('dealForm').reset();
+  document.getElementById('editId').value = '';
+  document.getElementById('imgPreview').classList.add('hidden');
+  document.getElementById('discountPreview').classList.add('hidden');
+  document.getElementById('submitBtn').textContent = '➕ Add Deal';
+  document.getElementById('f_active').checked = true;
+}
+
+// ── Edit Modal ─────────────────────────────────────────────
+function openEditModal(id) {
+  const d = adminDealsCache.find(x => x._id === id);
+  if (!d) return;
+  document.getElementById('e_id').value = d._id;
+  document.getElementById('e_title').value = d.title;
+  document.getElementById('e_newPrice').value = d.newPrice;
+  document.getElementById('e_oldPrice').value = d.oldPrice;
+  document.getElementById('e_imageUrl').value = d.imageUrl;
+  document.getElementById('e_affiliateLink').value = d.affiliateLink;
+  document.getElementById('e_platform').value = d.platform;
+  document.getElementById('e_brand').value = d.brand;
+  document.getElementById('e_category').value = d.category;
+  document.getElementById('e_featured').checked = d.featured;
+  document.getElementById('e_trending').checked = d.trending;
+  document.getElementById('e_hotDeal').checked = d.hotDeal;
+  document.getElementById('e_active').checked = d.active;
+  document.getElementById('editModal').classList.remove('hidden');
+}
+
+function closeEditModal() {
+  document.getElementById('editModal').classList.add('hidden');
+}
+
+async function handleEditSubmit(e) {
+  e.preventDefault();
+  const id = document.getElementById('e_id').value;
+  const body = {
+    title: document.getElementById('e_title').value,
+    newPrice: parseFloat(document.getElementById('e_newPrice').value),
+    oldPrice: parseFloat(document.getElementById('e_oldPrice').value),
+    imageUrl: document.getElementById('e_imageUrl').value,
+    affiliateLink: document.getElementById('e_affiliateLink').value,
+    platform: document.getElementById('e_platform').value,
+    brand: document.getElementById('e_brand').value,
+    category: document.getElementById('e_category').value,
+    featured: document.getElementById('e_featured').checked,
+    trending: document.getElementById('e_trending').checked,
+    hotDeal: document.getElementById('e_hotDeal').checked,
+    active: document.getElementById('e_active').checked,
+  };
+  try {
+    const res = await fetch(`${API}/deals/${id}`, { method: 'PUT', headers: authHeaders(), body: JSON.stringify(body) });
+    const data = await res.json();
+    if (data.success) { toast('Deal updated!'); closeEditModal(); loadAdminDeals(adminPage); }
+    else toast(data.message, 'error');
+  } catch (err) { toast('Update failed', 'error'); }
+}
+
+// ── Featured Deals Admin ───────────────────────────────────
+async function loadFeaturedAdmin() {
+  try {
+    const res = await fetch(`${API}/deals/featured`);
+    const data = await res.json();
+    const container = document.getElementById('featuredList');
+    if (!data.success || !data.deals.length) {
+      container.innerHTML = '<div class="text-center py-10 text-gray-500">No featured deals. Mark deals as featured when adding/editing.</div>';
+      return;
+    }
+    container.innerHTML = data.deals.map(d => `
+      <div class="deal-row">
+        <img class="deal-thumb" src="${d.imageUrl}" onerror="this.src='https://placehold.co/52x52/1f2937/374151?text=?'" loading="lazy" />
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-semibold text-gray-100 truncate">${d.title}</div>
+          <div class="text-green-400 font-bold text-sm mt-1">₹${d.newPrice.toLocaleString()} <span class="text-gray-500 line-through text-xs font-normal">₹${d.oldPrice.toLocaleString()}</span></div>
+        </div>
+        <button class="btn-sm btn-edit" onclick="openEditModal('${d._id}');showTab('deals');setTimeout(()=>openEditModal('${d._id}'),100)">✏️ Edit</button>
+      </div>`).join('');
+  } catch (e) { console.error(e); }
+}
+
+async function logout() {
+  await fetch(`${API}/admin/logout`, { method: 'POST', headers: authHeaders() }).catch(() => {});
+  localStorage.removeItem('adminToken');
+  window.location.href = '/admin/login';
+}
+
+// Init
+loadStats();
+</script>
+</body>
+</html>

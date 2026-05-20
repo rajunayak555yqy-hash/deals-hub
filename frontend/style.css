@@ -1,0 +1,654 @@
+/* ── DealHub Global Styles ─────────────────────────── */
+
+:root {
+  --orange: #f97316;
+  --orange-dark: #ea580c;
+  --bg: #030712;
+  --bg-card: #111827;
+  --bg-card-hover: #1f2937;
+  --border: #1f2937;
+  --text: #f9fafb;
+  --text-muted: #6b7280;
+  --flipkart: #2874f0;
+  --amazon: #ff9900;
+  --meesho: #f43397;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+h1, h2, h3, .logo-text {
+  font-family: 'Syne', sans-serif;
+}
+
+/* ── Hero ───────────────────────────────────────────── */
+.hero-banner {
+  background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(249,115,22,0.12), transparent);
+}
+.hero-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(circle 600px at 50% 0%, rgba(249,115,22,0.06), transparent);
+  pointer-events: none;
+}
+.gradient-text {
+  background: linear-gradient(135deg, #f97316, #ef4444, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Buttons ────────────────────────────────────────── */
+.btn-primary {
+  background: linear-gradient(135deg, #f97316, #ef4444);
+  color: white;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  display: inline-block;
+  transition: all 0.2s;
+  box-shadow: 0 0 20px rgba(249,115,22,0.25);
+}
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(249,115,22,0.4); }
+
+.btn-secondary {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: white;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  display: inline-block;
+  transition: all 0.2s;
+}
+.btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+
+/* ── Deal Grid ──────────────────────────────────────── */
+.deals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 640px) {
+  .deals-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+/* ── Horizontal Scroll for Platform Sections ────────── */
+.deals-scroll-container {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-bottom: 8px;
+}
+.deals-scroll-container::-webkit-scrollbar { display: none; }
+.deals-scroll {
+  display: flex;
+  gap: 12px;
+  width: max-content;
+  padding: 4px 0;
+}
+.deals-scroll .deal-card { width: 200px; flex-shrink: 0; }
+
+/* ── Deal Card ──────────────────────────────────────── */
+.deal-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(.4,0,.2,1);
+  position: relative;
+  cursor: pointer;
+}
+.deal-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(249,115,22,0.3);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(249,115,22,0.15);
+}
+
+.deal-image-wrap {
+  position: relative;
+  padding-top: 100%;
+  overflow: hidden;
+  background: #1a1a2e;
+}
+.deal-image-wrap img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.deal-card:hover .deal-image-wrap img { transform: scale(1.06); }
+
+.deal-body { padding: 12px; }
+
+.deal-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #e5e7eb;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: 8px;
+  min-height: 34px;
+}
+
+.deal-prices {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.deal-new-price {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: #10b981;
+}
+.deal-old-price {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.deal-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+/* Discount badge */
+.badge-discount {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 20px;
+  letter-spacing: 0.02em;
+}
+.badge-trending {
+  background: rgba(249,115,22,0.15);
+  color: #f97316;
+  border: 1px solid rgba(249,115,22,0.3);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 20px;
+}
+.badge-hot {
+  background: rgba(239,68,68,0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239,68,68,0.3);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 20px;
+}
+
+/* Platform badges */
+.platform-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 9px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.05em;
+  backdrop-filter: blur(8px);
+  text-transform: uppercase;
+}
+.platform-badge-amazon, .pb-amazon {
+  background: rgba(255,153,0,0.9);
+  color: #000;
+}
+.platform-badge-flipkart, .pb-flipkart {
+  background: rgba(40,116,240,0.9);
+  color: #fff;
+}
+.platform-badge-meesho, .pb-meesho {
+  background: rgba(244,51,151,0.9);
+  color: #fff;
+}
+
+/* Section platform badges (large) */
+span.platform-badge-flipkart { background: var(--flipkart); color: white; padding: 4px 10px; border-radius: 8px; font-size: 14px; font-family: 'Syne', sans-serif; font-weight: 800; }
+span.platform-badge-amazon { background: var(--amazon); color: #000; padding: 4px 10px; border-radius: 8px; font-size: 14px; font-family: 'Syne', sans-serif; font-weight: 800; }
+span.platform-badge-meesho { background: var(--meesho); color: #fff; padding: 4px 10px; border-radius: 8px; font-size: 14px; font-family: 'Syne', sans-serif; font-weight: 800; }
+
+.buy-btn {
+  width: 100%;
+  padding: 8px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f97316, #ef4444);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+  font-family: 'Syne', sans-serif;
+  letter-spacing: 0.03em;
+  text-align: center;
+  display: block;
+  transition: all 0.2s;
+  box-shadow: 0 2px 12px rgba(249,115,22,0.3);
+  text-decoration: none;
+}
+.buy-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(249,115,22,0.5);
+  color: white;
+}
+
+.deal-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
+}
+.action-btn {
+  flex: 1;
+  padding: 5px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--text-muted);
+  font-size: 11px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+.action-btn:hover { background: rgba(255,255,255,0.1); color: white; }
+
+/* ── Skeleton Loaders ───────────────────────────────── */
+.deal-skeleton {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.1s);
+}
+.deal-skeleton::before {
+  content: '';
+  display: block;
+  padding-top: 100%;
+  background: linear-gradient(90deg, #1f2937 25%, #374151 50%, #1f2937 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+.deal-skeleton::after {
+  content: '';
+  display: block;
+  height: 100px;
+  margin: 12px;
+  background: linear-gradient(90deg, #1f2937 25%, #374151 50%, #1f2937 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* ── Brand Filters ──────────────────────────────────── */
+.brand-btn {
+  padding: 8px 18px;
+  border-radius: 50px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #9ca3af;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.brand-btn:hover {
+  background: rgba(249,115,22,0.1);
+  border-color: rgba(249,115,22,0.4);
+  color: #f97316;
+}
+.brand-btn.active {
+  background: linear-gradient(135deg, rgba(249,115,22,0.2), rgba(239,68,68,0.2));
+  border-color: rgba(249,115,22,0.5);
+  color: #f97316;
+}
+
+/* ── Chatbot ────────────────────────────────────────── */
+.chatbot-container {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+.chat-toggle {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f97316, #ef4444);
+  border: none;
+  cursor: pointer;
+  font-size: 22px;
+  box-shadow: 0 4px 20px rgba(249,115,22,0.5);
+  transition: all 0.3s;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.chat-toggle:hover { transform: scale(1.1); box-shadow: 0 6px 30px rgba(249,115,22,0.7); }
+
+.chat-badge {
+  position: absolute;
+  top: -4px; right: -4px;
+  width: 18px; height: 18px;
+  background: #ef4444;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: bold;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg);
+}
+
+.chat-window {
+  width: 320px;
+  max-height: 480px;
+  background: #111827;
+  border: 1px solid rgba(249,115,22,0.2);
+  border-radius: 20px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.chat-header {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(249,115,22,0.15);
+}
+.chat-avatar {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, #f97316, #ef4444);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scrollbar-width: thin;
+  scrollbar-color: #374151 transparent;
+}
+
+.bot-bubble {
+  background: rgba(249,115,22,0.1);
+  border: 1px solid rgba(249,115,22,0.2);
+  padding: 10px 12px;
+  border-radius: 12px 12px 12px 0;
+  font-size: 13px;
+  color: #e5e7eb;
+  line-height: 1.5;
+  max-width: 90%;
+}
+.user-message { display: flex; justify-content: flex-end; }
+.user-bubble {
+  background: linear-gradient(135deg, #f97316, #ef4444);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 12px 12px 0 12px;
+  font-size: 13px;
+  max-width: 80%;
+}
+
+.suggestion-chip {
+  display: inline-block;
+  background: rgba(249,115,22,0.15);
+  border: 1px solid rgba(249,115,22,0.3);
+  color: #f97316;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  cursor: pointer;
+  margin: 3px 2px;
+  transition: all 0.2s;
+}
+.suggestion-chip:hover { background: rgba(249,115,22,0.3); }
+
+.chat-deal-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 10px;
+  margin-top: 8px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+.chat-deal-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #1f2937;
+}
+.chat-deal-info { flex: 1; min-width: 0; }
+.chat-deal-title { font-size: 11px; font-weight: 600; color: #e5e7eb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-deal-price { font-size: 13px; font-weight: 800; color: #10b981; font-family: 'Syne', sans-serif; }
+.chat-deal-btn {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #f97316, #ef4444);
+  color: white;
+  text-decoration: none;
+  flex-shrink: 0;
+  display: inline-block;
+  transition: all 0.2s;
+}
+.chat-deal-btn:hover { transform: scale(1.05); color: white; }
+
+.chat-input-area {
+  padding: 10px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  gap: 8px;
+}
+.chat-input {
+  flex: 1;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: white;
+  outline: none;
+  transition: border 0.2s;
+}
+.chat-input:focus { border-color: rgba(249,115,22,0.5); }
+.chat-input::placeholder { color: #4b5563; }
+
+.chat-send {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f97316, #ef4444);
+  border: none;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.chat-send:hover { transform: scale(1.1); }
+
+.chat-typing {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 10px 12px;
+  background: rgba(249,115,22,0.08);
+  border-radius: 12px;
+  width: fit-content;
+}
+.chat-typing span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #f97316;
+  animation: typing 1s infinite;
+}
+.chat-typing span:nth-child(2) { animation-delay: 0.2s; }
+.chat-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing {
+  0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+  30% { opacity: 1; transform: translateY(-4px); }
+}
+
+/* ── Toast ──────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #10b981;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 9999;
+  box-shadow: 0 4px 20px rgba(16,185,129,0.4);
+  animation: toastIn 0.3s ease;
+}
+@keyframes toastIn {
+  from { opacity: 0; bottom: 80px; }
+  to { opacity: 1; bottom: 100px; }
+}
+
+/* ── Modal ──────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.8);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+.modal-content {
+  background: #111827;
+  border: 1px solid rgba(249,115,22,0.2);
+  border-radius: 20px;
+  padding: 24px;
+  max-width: 400px;
+  width: 100%;
+  position: relative;
+  animation: modalIn 0.3s ease;
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: rgba(255,255,255,0.08);
+  border: none;
+  color: #9ca3af;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.modal-close:hover { background: rgba(255,255,255,0.15); color: white; }
+
+/* ── Search Dropdown ────────────────────────────────── */
+.search-dropdown .search-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.search-dropdown .search-item:hover { background: rgba(249,115,22,0.08); }
+.search-dropdown .search-item img { width: 36px; height: 36px; border-radius: 8px; object-fit: cover; background: #1f2937; }
+.search-dropdown .search-item-title { font-size: 12px; font-weight: 600; color: #e5e7eb; }
+.search-dropdown .search-item-price { font-size: 11px; color: #10b981; font-weight: 700; }
+
+/* ── View All Button ────────────────────────────────── */
+.view-all-btn { display: inline-block; transition: all 0.2s; }
+.view-all-btn:hover { transform: translateX(2px); }
+
+/* ── Telegram Button ────────────────────────────────── */
+.telegram-btn { transition: all 0.2s; }
+.telegram-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(37,99,235,0.4); }
+
+/* ── Empty State ────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-muted);
+}
+.empty-state .emoji { font-size: 40px; margin-bottom: 12px; }
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 640px) {
+  .chat-window { width: calc(100vw - 32px); }
+  .chatbot-container { bottom: 16px; right: 16px; }
+}

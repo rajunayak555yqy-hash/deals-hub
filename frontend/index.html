@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DealHub – Best Daily Deals on Amazon, Flipkart & Meesho</title>
+  <meta name="description" content="Find the best daily deals on Amazon, Flipkart, Meesho and more. Huge discounts on electronics, fashion, home & beauty products." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="bg-gray-950 text-white min-h-screen">
+
+<!-- ─── HEADER ─────────────────────────────────────────── -->
+<header class="sticky top-0 z-50 bg-gray-950/95 backdrop-blur border-b border-gray-800" id="mainHeader">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex items-center gap-3 h-16">
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2 shrink-0 mr-4">
+        <div class="logo-icon">
+          <svg width="32" height="32" viewBox="0 0 32 32"><defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#f97316"/><stop offset="100%" style="stop-color:#ef4444"/></linearGradient></defs><rect width="32" height="32" rx="8" fill="url(#lg)"/><text x="6" y="23" font-size="18" font-family="serif" font-weight="bold" fill="white">D</text></svg>
+        </div>
+        <span class="logo-text font-extrabold text-xl tracking-tight">Deal<span class="text-orange-500">Hub</span></span>
+      </a>
+
+      <!-- Nav links (desktop) -->
+      <nav class="hidden md:flex items-center gap-1 text-sm font-medium">
+        <a href="#today" class="nav-link px-3 py-2 rounded-lg text-gray-300 hover:text-orange-400 hover:bg-gray-800 transition-all">🔥 Today's Deals</a>
+        <a href="#flipkart" class="nav-link px-3 py-2 rounded-lg text-gray-300 hover:text-blue-400 hover:bg-gray-800 transition-all">Flipkart</a>
+        <a href="#amazon" class="nav-link px-3 py-2 rounded-lg text-gray-300 hover:text-yellow-400 hover:bg-gray-800 transition-all">Amazon</a>
+        <a href="#meesho" class="nav-link px-3 py-2 rounded-lg text-gray-300 hover:text-pink-400 hover:bg-gray-800 transition-all">Meesho</a>
+        <a href="#brands" class="nav-link px-3 py-2 rounded-lg text-gray-300 hover:text-green-400 hover:bg-gray-800 transition-all">Brands</a>
+      </nav>
+
+      <!-- Search bar -->
+      <div class="flex-1 max-w-md mx-auto relative hidden sm:block">
+        <input type="text" id="searchInput" placeholder="Search deals... earbuds, kurti, watch" 
+          class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all" />
+        <span class="absolute right-3 top-2.5 text-gray-500 text-xs">⌘K</span>
+        <div id="searchDropdown" class="search-dropdown hidden absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl overflow-hidden z-50"></div>
+      </div>
+
+      <!-- Right actions -->
+      <div class="flex items-center gap-2 ml-auto md:ml-0">
+        <a href="https://t.me/your_channel" target="_blank" 
+           class="telegram-btn flex items-center gap-1.5 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold px-3 py-2 rounded-xl transition-all">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.018 9.51c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.881.71z"/></svg>
+          <span class="hidden sm:inline">Join Telegram</span>
+        </a>
+        <!-- Mobile search toggle -->
+        <button onclick="toggleMobileSearch()" class="sm:hidden p-2 text-gray-400 hover:text-white">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+        <!-- Mobile menu -->
+        <button onclick="toggleMobileMenu()" class="md:hidden p-2 text-gray-400 hover:text-white">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile search bar -->
+    <div id="mobileSearch" class="hidden pb-3 sm:hidden">
+      <input type="text" id="mobileSearchInput" placeholder="Search deals..." 
+        class="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-orange-500" />
+    </div>
+
+    <!-- Mobile nav -->
+    <div id="mobileMenu" class="hidden md:hidden pb-3 border-t border-gray-800 pt-3">
+      <nav class="flex flex-wrap gap-2 text-sm">
+        <a href="#today" onclick="closeMobileMenu()" class="px-3 py-1.5 bg-gray-800 rounded-lg text-gray-300">🔥 Today's Deals</a>
+        <a href="#flipkart" onclick="closeMobileMenu()" class="px-3 py-1.5 bg-gray-800 rounded-lg text-gray-300">Flipkart</a>
+        <a href="#amazon" onclick="closeMobileMenu()" class="px-3 py-1.5 bg-gray-800 rounded-lg text-gray-300">Amazon</a>
+        <a href="#meesho" onclick="closeMobileMenu()" class="px-3 py-1.5 bg-gray-800 rounded-lg text-gray-300">Meesho</a>
+        <a href="#brands" onclick="closeMobileMenu()" class="px-3 py-1.5 bg-gray-800 rounded-lg text-gray-300">Brands</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<!-- ─── HERO BANNER ────────────────────────────────────── -->
+<section class="hero-banner relative overflow-hidden py-10 px-4">
+  <div class="hero-glow"></div>
+  <div class="max-w-7xl mx-auto text-center relative z-10">
+    <div class="inline-flex items-center gap-2 bg-orange-500/10 border border-orange-500/30 text-orange-400 text-xs font-semibold px-4 py-1.5 rounded-full mb-4 animate-pulse">
+      <span>⚡</span> LIVE DEALS UPDATED DAILY
+    </div>
+    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-4">
+      India's Best<br/>
+      <span class="gradient-text">Affiliate Deals</span>
+    </h1>
+    <p class="text-gray-400 text-base sm:text-lg max-w-xl mx-auto mb-6">
+      Handpicked daily deals from Amazon, Flipkart & Meesho. Up to 90% off!
+    </p>
+    <div class="flex flex-wrap justify-center gap-3">
+      <a href="#today" class="btn-primary px-6 py-3 rounded-xl font-bold text-sm">🔥 Today's Deals</a>
+      <a href="https://t.me/your_channel" target="_blank" class="btn-secondary px-6 py-3 rounded-xl font-bold text-sm">📢 Join Telegram</a>
+    </div>
+    <!-- Stats bar -->
+    <div class="flex justify-center gap-8 mt-8 text-center">
+      <div><div class="text-2xl font-bold text-orange-400" id="statDeals">500+</div><div class="text-xs text-gray-500">Active Deals</div></div>
+      <div class="border-l border-gray-800"></div>
+      <div><div class="text-2xl font-bold text-orange-400">90%</div><div class="text-xs text-gray-500">Max Discount</div></div>
+      <div class="border-l border-gray-800"></div>
+      <div><div class="text-2xl font-bold text-orange-400">3</div><div class="text-xs text-gray-500">Platforms</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECTION 1: TODAY'S BEST DEALS ─────────────────── -->
+<section id="today" class="py-10 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="section-header flex items-center justify-between mb-6">
+      <div>
+        <h2 class="text-2xl font-extrabold flex items-center gap-2">🔥 Today's Greatest Collection</h2>
+        <p class="text-gray-500 text-sm mt-1">Best 10 deals of the day — hand-picked for you</p>
+      </div>
+      <span class="hidden sm:inline text-xs bg-orange-500/10 text-orange-400 border border-orange-500/20 px-3 py-1 rounded-full">Updated daily</span>
+    </div>
+    <div id="featuredDeals" class="deals-grid">
+      <!-- Skeleton loaders -->
+      <div class="deal-skeleton" style="--i:0"></div>
+      <div class="deal-skeleton" style="--i:1"></div>
+      <div class="deal-skeleton" style="--i:2"></div>
+      <div class="deal-skeleton" style="--i:3"></div>
+      <div class="deal-skeleton" style="--i:4"></div>
+      <div class="deal-skeleton" style="--i:5"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECTION 2: FLIPKART DEALS ─────────────────────── -->
+<section id="flipkart" class="py-10 px-4 bg-gray-900/40">
+  <div class="max-w-7xl mx-auto">
+    <div class="section-header flex items-center justify-between mb-6">
+      <div>
+        <h2 class="text-2xl font-extrabold flex items-center gap-2">
+          <span class="platform-badge-flipkart text-lg">F</span> Flipkart Deals
+        </h2>
+        <p class="text-gray-500 text-sm mt-1">Best deals from Flipkart</p>
+      </div>
+      <a href="#flipkart" onclick="loadMoreDeals('Flipkart')" class="view-all-btn text-xs text-blue-400 hover:text-blue-300 border border-blue-500/30 px-3 py-1 rounded-lg transition-all">View All →</a>
+    </div>
+    <div id="flipkartDeals" class="deals-scroll-container">
+      <div class="deals-scroll"><!-- Populated by JS --></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECTION 3: AMAZON DEALS ───────────────────────── -->
+<section id="amazon" class="py-10 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="section-header flex items-center justify-between mb-6">
+      <div>
+        <h2 class="text-2xl font-extrabold flex items-center gap-2">
+          <span class="platform-badge-amazon text-lg">A</span> Amazon Deals
+        </h2>
+        <p class="text-gray-500 text-sm mt-1">Best deals from Amazon India</p>
+      </div>
+      <a href="#amazon" onclick="loadMoreDeals('Amazon')" class="view-all-btn text-xs text-yellow-400 hover:text-yellow-300 border border-yellow-500/30 px-3 py-1 rounded-lg transition-all">View All →</a>
+    </div>
+    <div id="amazonDeals" class="deals-scroll-container">
+      <div class="deals-scroll"><!-- Populated by JS --></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECTION 4: MEESHO DEALS ───────────────────────── -->
+<section id="meesho" class="py-10 px-4 bg-gray-900/40">
+  <div class="max-w-7xl mx-auto">
+    <div class="section-header flex items-center justify-between mb-6">
+      <div>
+        <h2 class="text-2xl font-extrabold flex items-center gap-2">
+          <span class="platform-badge-meesho text-lg">M</span> Meesho Deals
+        </h2>
+        <p class="text-gray-500 text-sm mt-1">Budget buys from Meesho</p>
+      </div>
+      <a href="#meesho" onclick="loadMoreDeals('Meesho')" class="view-all-btn text-xs text-pink-400 hover:text-pink-300 border border-pink-500/30 px-3 py-1 rounded-lg transition-all">View All →</a>
+    </div>
+    <div id="meeshoDeals" class="deals-scroll-container">
+      <div class="deals-scroll"><!-- Populated by JS --></div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SECTION 5: BRANDS ─────────────────────────────── -->
+<section id="brands" class="py-10 px-4">
+  <div class="max-w-7xl mx-auto">
+    <div class="section-header mb-6">
+      <h2 class="text-2xl font-extrabold flex items-center gap-2">🏷️ Shop by Brand</h2>
+      <p class="text-gray-500 text-sm mt-1">Find deals from your favourite brands</p>
+    </div>
+    <div class="brand-filters flex flex-wrap gap-2 mb-8" id="brandFilters">
+      <button class="brand-btn active" data-brand="">All Brands</button>
+      <button class="brand-btn" data-brand="Boat">🎧 Boat</button>
+      <button class="brand-btn" data-brand="Noise">⌚ Noise</button>
+      <button class="brand-btn" data-brand="Samsung">📱 Samsung</button>
+      <button class="brand-btn" data-brand="Apple">🍎 Apple</button>
+      <button class="brand-btn" data-brand="Zebronics">🔊 Zebronics</button>
+      <button class="brand-btn" data-brand="Realme">📡 Realme</button>
+      <button class="brand-btn" data-brand="MI">🔴 MI</button>
+      <button class="brand-btn" data-brand="Sony">🎵 Sony</button>
+    </div>
+    <div id="brandDeals" class="deals-grid"></div>
+    <div class="text-center mt-6">
+      <button id="loadMoreBtn" onclick="loadMoreBrandDeals()" class="btn-secondary px-8 py-3 rounded-xl font-semibold text-sm hidden">Load More Deals</button>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─────────────────────────────────────────── -->
+<footer class="bg-gray-900 border-t border-gray-800 py-10 px-4 mt-8">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+      <div class="col-span-2 md:col-span-1">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-xl font-extrabold">Deal<span class="text-orange-500">Hub</span></span>
+        </div>
+        <p class="text-gray-400 text-sm">India's #1 affiliate deal aggregator. Daily deals from Amazon, Flipkart & Meesho.</p>
+        <a href="https://t.me/your_channel" class="inline-flex items-center gap-2 mt-3 text-blue-400 text-sm hover:text-blue-300">
+          📢 Join our Telegram channel
+        </a>
+      </div>
+      <div>
+        <h3 class="font-bold text-sm text-gray-200 mb-3">Platforms</h3>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li><a href="#flipkart" class="hover:text-white">Flipkart Deals</a></li>
+          <li><a href="#amazon" class="hover:text-white">Amazon Deals</a></li>
+          <li><a href="#meesho" class="hover:text-white">Meesho Deals</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-bold text-sm text-gray-200 mb-3">Categories</h3>
+        <ul class="space-y-2 text-sm text-gray-400">
+          <li><a href="#" onclick="filterByCategory('Electronics')" class="hover:text-white">Electronics</a></li>
+          <li><a href="#" onclick="filterByCategory('Fashion')" class="hover:text-white">Fashion</a></li>
+          <li><a href="#" onclick="filterByCategory('Home')" class="hover:text-white">Home</a></li>
+          <li><a href="#" onclick="filterByCategory('Beauty')" class="hover:text-white">Beauty</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="font-bold text-sm text-gray-200 mb-3">Share</h3>
+        <div class="flex gap-3">
+          <a href="https://t.me/share/url?url=https://dealhub.in" target="_blank" class="share-icon text-blue-400 hover:scale-110 transition-transform">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.018 9.51c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.871 4.326-2.962-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.881.71z"/></svg>
+          </a>
+          <a href="https://wa.me/?text=Check%20out%20DealHub%20for%20amazing%20deals!" target="_blank" class="share-icon text-green-400 hover:scale-110 transition-transform">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="border-t border-gray-800 pt-6 text-center text-xs text-gray-600">
+      <p>© 2024 DealHub. All affiliate links earn a small commission at no extra cost to you.</p>
+      <p class="mt-1">Prices and discounts are subject to change. Always verify on the retailer's site before purchase.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ─── AI CHATBOT ──────────────────────────────────────── -->
+<div id="chatbot" class="chatbot-container">
+  <div id="chatWindow" class="chat-window hidden">
+    <div class="chat-header">
+      <div class="flex items-center gap-2">
+        <div class="chat-avatar">🤖</div>
+        <div>
+          <div class="text-sm font-bold">DealBot</div>
+          <div class="text-xs text-green-400 flex items-center gap-1"><span class="w-1.5 h-1.5 bg-green-400 rounded-full inline-block"></span>Online</div>
+        </div>
+      </div>
+      <button onclick="toggleChat()" class="text-gray-400 hover:text-white p-1">✕</button>
+    </div>
+    <div id="chatMessages" class="chat-messages">
+      <div class="bot-message">
+        <div class="bot-bubble">
+          Hi! 👋 I'm <strong>DealBot</strong>. Ask me anything like:<br/>
+          <span class="suggestion-chip" onclick="askBot('Best earbuds under 1000')">Best earbuds under 1000</span>
+          <span class="suggestion-chip" onclick="askBot('Cheap smartwatch')">Cheap smartwatch</span>
+          <span class="suggestion-chip" onclick="askBot('Best kurti under 500')">Best kurti under 500</span>
+        </div>
+      </div>
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chatInput" placeholder="Ask about deals..." 
+        onkeydown="if(event.key==='Enter')sendMessage()"
+        class="chat-input" />
+      <button onclick="sendMessage()" class="chat-send">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+  <button onclick="toggleChat()" id="chatToggle" class="chat-toggle" aria-label="Open DealBot">
+    <span id="chatIcon">💬</span>
+    <span class="chat-badge hidden" id="chatBadge">1</span>
+  </button>
+</div>
+
+<!-- ─── TOAST NOTIFICATION ────────────────────────────── -->
+<div id="toast" class="toast hidden">✓ Copied to clipboard!</div>
+
+<!-- ─── DEAL MODAL ─────────────────────────────────────── -->
+<div id="dealModal" class="modal-overlay hidden" onclick="if(event.target===this)closeDealModal()">
+  <div class="modal-content">
+    <button onclick="closeDealModal()" class="modal-close">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>
