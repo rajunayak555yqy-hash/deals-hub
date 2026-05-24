@@ -49,7 +49,7 @@
     const token = localStorage.getItem('adminToken');
     if (token) {
       fetch('/api/admin/verify', { headers: { Authorization: 'Bearer ' + token } })
-        .then(r => r.json()).then(d => { if (d.success) window.location.href = '/admin'; })
+        .then(r => r.json()).then(d => { if (d.success) window.location.href = '/admin/dashboard.html'; })
         .catch(() => {});
     }
 
@@ -73,7 +73,7 @@
         const data = await res.json();
         if (data.success) {
           localStorage.setItem('adminToken', data.token);
-          window.location.href = '/admin';
+          window.location.href = '/admin/dashboard.html';
         } else {
           err.textContent = data.message || 'Invalid credentials';
           err.style.display = 'block';
