@@ -6,6 +6,7 @@ const authMiddleware = require('../middleware/auth');
 
 // POST /api/admin/login
 router.post('/login', async (req, res) => {
+  console.log(req.body);
   try {
     const { username, password } = req.body;
     const admin = await Admin.findOne({ username });

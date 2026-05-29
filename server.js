@@ -13,21 +13,15 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Security middleware
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdn.tailwindcss.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      scriptSrc: ["'self'", "'unsafe-inline'","'unsafe-eval'", "https://cdn.tailwindcss.com"],
-      imgSrc: ["'self'", "data:", "https:", "http:"],
-      connectSrc: ["'self'"]
-    }
-  }
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: false
+  })
+);
 
 app.use(cors());
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 
 // Session
@@ -62,7 +56,7 @@ app.get("/admin", (req, res) => {
   res.sendFile(__dirname + "/frontend/admin/dashboard.html");
 });
 // Static files
-app.use(express.static(path.join(__dirname +"/frontend")));
+app.use(express.static(path.join(__dirname, 'frontend')));
 
 
 

@@ -452,17 +452,43 @@ function previewImage(url) {
 }
 
 // Live discount preview
-['f_newPrice','f_oldPrice'].forEach(id => {
-  document.getElementById(id)?.addEventListener('input', () => {
-    const np = parseFloat(document.getElementById('f_newPrice').value);
-    const op = parseFloat(document.getElementById('f_oldPrice').value);
-    const preview = document.getElementById('discountPreview');
-    if (np && op && op > np) {
-      const disc = Math.round(((op - np) / op) * 100);
-      document.getElementById('discountVal').textContent = `${disc}% OFF (saving ₹${(op-np).toLocaleString()})`;
-      preview.classList.remove('hidden');
-    } else { preview.classList.add('hidden'); }
+window.addEventListener('DOMContentLoaded', () => {
+
+  ['f_newPrice','f_oldPrice'].forEach(id => {
+
+    const element = document.getElementById(id);
+
+    if (element) {
+
+      element.addEventListener('input', () => {
+
+        const np = parseFloat(document.getElementById('f_newPrice').value);
+
+        const op = parseFloat(document.getElementById('f_oldPrice').value);
+
+        const preview = document.getElementById('discountPreview');
+
+        if (np && op && op > np) {
+
+          const disc = Math.round(((op - np) / op) * 100);
+
+          document.getElementById('discountVal').textContent =
+            `${disc}% OFF (saving ₹${(op - np).toLocaleString()})`;
+
+          preview.classList.remove('hidden');
+
+        } else {
+
+          preview.classList.add('hidden');
+
+        }
+
+      });
+
+    }
+
   });
+
 });
 
 async function handleDealSubmit(e) {
