@@ -1,6 +1,6 @@
 /* ── DealHub Frontend App ────────────────────────────── */
 
-const API = 'http://localhost:3000/api';
+const API_URL = ''
 let allBrandDeals = [];
 let brandPage = 1;
 let currentBrand = '';
