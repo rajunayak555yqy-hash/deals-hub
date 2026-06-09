@@ -1,6 +1,6 @@
 /* ── DealHub Frontend App ────────────────────────────── */
 
-const API_URL = ''
+const API = '';
 let allBrandDeals = [];
 let brandPage = 1;
 let currentBrand = '';
