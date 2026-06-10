@@ -50,6 +50,21 @@ const admins = await Admin.find();
 res.json(admins);
 });
 
+app.get('/reset-admin', async (req, res) => {
+  const Admin = require('./models/Admin');
+
+  await Admin.deleteMany({});
+
+  const admin = new Admin({
+    username: 'admin',
+    password: 'Admin@123'
+  });
+
+  await admin.save();
+
+  res.send('Admin reset successfully');
+});
+
 app.get('/create-admin', async (req, res) => {
   const Admin = require('./models/Admin');
 
