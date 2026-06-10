@@ -50,12 +50,6 @@ const admins = await Admin.find();
 res.json(admins);
 });
 
-app.get('/delete-admin', async (req, res) => {
-  const Admin = require('./models/Admin');
-  await Admin.deleteMany({});
-  res.send('All admins deleted');
-});
-
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/frontend/index.html");
 });
