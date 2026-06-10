@@ -44,6 +44,13 @@ app.use('/api/deals', require('./routes/deals'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/chatbot', require('./routes/chatbot'));
 
+ app.get('/check-admin', async (req, res) => {
+const Admin = require('./models/Admin');
+const admins = await Admin.find();
+res.json(admins);
+});
+
+
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/frontend/index.html");
 });
