@@ -50,6 +50,18 @@ const admins = await Admin.find();
 res.json(admins);
 });
 
+app.get('/create-admin', async (req, res) => {
+  const Admin = require('./models/Admin');
+
+  const admin = new Admin({
+    username: 'admin',
+    password: 'Admin@123'
+  });
+
+  await admin.save();
+  res.send('Admin created');
+});
+
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/frontend/index.html");
 });
