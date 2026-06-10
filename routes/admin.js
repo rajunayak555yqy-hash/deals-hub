@@ -6,13 +6,24 @@ const authMiddleware = require('../middleware/auth');
 
 // POST /api/admin/login
 router.post('/login', async (req, res) => {
-  console.log(req.body);
   try {
     const { username, password } = req.body;
+
+    console.log('Login request:', req.body);
+
     const admin = await Admin.findOne({ username });
-    
+    console.log('Admin found:', !!admin);
+
+    if (admin) {
+      const match = await admin.comparePassword(password);
+      console.log('Password match:', match);
+    }
+
     if (!admin || !(await admin.comparePassword(password))) {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid credentials'
+      });
     }
 
     const token = jwt.sign(
